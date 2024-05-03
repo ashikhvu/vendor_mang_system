@@ -17,7 +17,7 @@ def vendors(request):
     else:
         return Response()
     
-@api_view(['GET','PUT'])
+@api_view(['GET','PUT','DELETE'])
 def view_or_edit_vendor(request,pk):
     if request.method=="GET":
         try:
@@ -32,7 +32,15 @@ def view_or_edit_vendor(request,pk):
             serializer = VendorSerializer(instance=vendor,data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                print('updated')
             return Response(serializer.data)
         except:
             return Response()
+    elif request.method=="DELETE":
+        try:
+            vendor = Vendor.objects.get(id=pk)
+            vendor.delete()
+            return Response("Vendor deleted successfull")
+        except:
+            return Response("Vendor deletion failed")
+    else:
+        return Response()
